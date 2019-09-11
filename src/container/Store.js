@@ -1,30 +1,14 @@
-import React, {Component} from 'react'
+import React, { PureComponent, Fragment } from 'react'
+
 import Header from '../components/Header'
 import Card from '../components/Card'
 import Table from '../components/Table'
+import CheckoutDialog from '../components/CheckoutDialog'
+
 
 import '../sass/pages/store.scss'
 
-class StoreDashboard extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      table : {}
-    }
-  }
-
-  handleAddTable = (id,qty) => {
-    const { table } = this.state
-
-    if (table[id]) {
-      table[id] +=  qty
-    } else {
-      table[id] = qty
-    }
-
-    this.setState({ table })
-  }
-
+class StoreDashboard extends PureComponent {
   handleDeleteItem = (id) => {
     const { table } = this.state
     delete table[id]
@@ -32,32 +16,39 @@ class StoreDashboard extends Component {
   }
 
   render() {
-    const { menu } = this.props
-    const { table } = this.state
+    const { menu, globalState } = this.props
+    const {
+      cartList: globalCartList,
+      isCheckout
+    } = globalState
 
-    // console.log('render table', table)
+
 
     return(
-      <main className="pageStore">
-        <Header/>
-        <Menu 
-          menu={menu}
-          className='pageStore_menu' 
-          onHandleAddTable={this.handleAddTable}
-        />
-        <Table 
-          menu={menu}
-          tableItems={table}
-          className='pageStore_table'
-          onHandleDeleteItem={this.handleDeleteItem}
-        />
-      </main>
+      <Fragment>
+        {isCheckout && (
+          <CheckoutDialog globalCartList={globalCartList}/>
+        )}
+        <main className="pageStore">
+          <Header/>
+          <Menu 
+            menu={menu}
+            className='pageStore_menu' 
+            globalCartList={globalCartList}
+          />
+          <Table 
+            menu={menu}
+            tableItems={globalCartList}
+            className='pageStore_table'
+          />
+        </main>
+      </Fragment>
     )
   }
 }
 
 
-function Menu({ menu, className, onHandleAddTable }) {
+function Menu({ menu, className, onHandleAddTable, globalCartList }) {
   return(
     <div className={className}>
       <div className="menu">
@@ -66,6 +57,7 @@ function Menu({ menu, className, onHandleAddTable }) {
             <Card 
               { ...menuItemProps }
               onHandleAddTable={onHandleAddTable}
+              globalCartList={globalCartList}
             />
           </div>
         ))}

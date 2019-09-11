@@ -1,13 +1,16 @@
 import React, {useState} from 'react'
 import '../sass/components/card/index.scss'
+import { useDispatch } from 'react-redux';
 
 function Card(props) {
+  const dispatch = useDispatch();
   const [qty, incrementQty] = useState(1)
 
   const {
     id, name ,  photo ,
     price , type ,
-    onHandleAddTable
+    onHandleAddTable,
+    globalCartList
   } = props
 
   const count = parseInt(qty)
@@ -18,7 +21,19 @@ function Card(props) {
   }
 
   const handleAddTable = () => {
-    onHandleAddTable(id, count)
+    const addCartData = { ...globalCartList }
+    if (addCartData[id]) {
+      addCartData[id] +=  qty
+    } else {
+      addCartData[id] =  qty
+    }
+
+    dispatch({
+      type: 'UPDATE_CARTLIST',
+      payload: { ...addCartData }
+    })
+
+    // onHandleAddTable(id, count)
     incrementQty(1)
   }
 

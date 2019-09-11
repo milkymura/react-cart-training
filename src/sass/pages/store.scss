@@ -37,3 +37,9 @@ $menu-width: calc( 100% - #{30rem});
 		background-color: $table-bg;
 	}
 }
+
+@media (max-width: 1441px) {
+	.pageStore_menu .menu {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+}

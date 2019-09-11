@@ -1,12 +1,27 @@
 import React from 'react'
+import { useDispatch } from 'react-redux';
 
 import '../sass/components/table/index.scss'
 
 
-function Table({ className, menu, tableItems, onHandleDeleteItem }) {
+function Table({ className, menu, tableItems }) {
 
-
+  const dispatch = useDispatch();
   const isEmpty = !Object.keys(tableItems).length > 0
+
+
+  const handleDelete = (id) => {
+    const tempTableItems = { ...tableItems }
+    delete tempTableItems[id]
+    dispatch({
+      type: 'UPDATE_CARTLIST',
+      payload: { ...tempTableItems }
+    })
+  }
+
+  const handleCheckout = () => {
+    dispatch({ type: 'SHOW_CHECKOUT', payload: true })
+  }
 
   return (
     <div className={className}>
@@ -28,7 +43,7 @@ function Table({ className, menu, tableItems, onHandleDeleteItem }) {
                 menu={menu}
                 tablekey={tablekey} 
                 qty={tableItems[tablekey]} 
-                onHandleDeleteItem={onHandleDeleteItem}
+                onHandleDelete={handleDelete}
               />
             ))}
           </ul>
@@ -39,7 +54,10 @@ function Table({ className, menu, tableItems, onHandleDeleteItem }) {
           menu={menu}
         />
 
-        <button className="table_checkoutBtn btn">
+        <button 
+          className="table_checkoutBtn btn"
+          onClick={handleCheckout}
+        >
           Checkout
         </button>
       </div>
@@ -48,7 +66,7 @@ function Table({ className, menu, tableItems, onHandleDeleteItem }) {
 
 }
 
-function TableItem({ menu, tablekey, qty, onHandleDeleteItem }) {
+function TableItem({ menu, tablekey, qty, onHandleDelete }) {
   // find item in menu
   const itemDetails = menu.find( item => item.id === parseInt(tablekey))
 
@@ -73,7 +91,7 @@ function TableItem({ menu, tablekey, qty, onHandleDeleteItem }) {
         Php {totalPrice}
       </div>
 
-      <div className="delete" onClick={() => { onHandleDeleteItem(id) }}>
+      <div className="delete" onClick={() => { onHandleDelete(id) }}>
         <i className="wtfs wtf-times"/>
       </div>
     </div>
